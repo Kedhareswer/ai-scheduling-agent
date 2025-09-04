@@ -106,3 +106,8 @@ $RECYCLE.BIN/
 
 # PDFs (if not version controlled)
 *.pdf
+
+# Allow specific data files for this project
+!Data/patients.csv
+!Data/doctor_schedule.xlsx
+!Forms/New Patient Intake Form.pdf

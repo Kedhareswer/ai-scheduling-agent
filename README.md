@@ -4,7 +4,6 @@
 [![Streamlit](https://img.shields.io/badge/Streamlit-1.47.0-red.svg)](https://streamlit.io/)
 [![LangChain](https://img.shields.io/badge/LangChain-0.3.26-green.svg)](https://langchain.com/)
 [![OpenAI](https://img.shields.io/badge/OpenAI-API-orange.svg)](https://openai.com/)
-[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 An intelligent AI-powered scheduling system for healthcare facilities that streamlines patient appointment booking, patient lookup, and automated reminders using advanced natural language processing.
 
@@ -17,7 +16,6 @@ An intelligent AI-powered scheduling system for healthcare facilities that strea
 - [Configuration](#configuration)
 - [Project Structure](#project-structure)
 - [Contributing](#contributing)
-- [License](#license)
 
 ## ✨ Features
 
@@ -213,10 +211,6 @@ We welcome contributions! Please follow these steps:
 - Add tests for new features
 - Update documentation as needed
 - Ensure all tests pass before submitting
-
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ## 🙏 Acknowledgments
 
