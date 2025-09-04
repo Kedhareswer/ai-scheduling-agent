@@ -10,6 +10,7 @@ from utils.email_sender import EmailSender
 from utils.sms_sender import SMSSender
 from utils.admin_exporter import AdminExporter
 from utils.agents import SchedulingAgentOrchestrator
+from utils.llm_provider import get_llm_provider
 
 # ----------------------------
 # Initialize Utilities
@@ -44,20 +45,24 @@ with st.sidebar:
     check_path("Data/doctor_schedule.xlsx", "Schedule Excel")
     check_path("Forms/New Patient Intake Form.pdf", "Intake Form PDF")
 
-    openai_key = os.getenv("OPENAI_API_KEY")
-    if openai_key:
-        st.success("OPENAI_API_KEY detected ✓")
+    # Check LLM provider status
+    llm_provider = get_llm_provider()
+    provider_info = llm_provider.get_provider_info()
+    
+    if llm_provider.is_available():
+        st.success(f"LLM Provider: {provider_info['active_provider'].upper()} ✓")
         st.info("🤖 LangGraph Multi-Agent System: ENABLED")
         st.info("🔧 LangChain Tools: ENABLED")
-        st.info("🧠 LLM: GPT-4o-mini")
+        st.info(f"🧠 Model: {provider_info['model']}")
     else:
-        st.warning("OPENAI_API_KEY not set. Using local CSV lookup (recommended for offline).")
+        st.warning("No LLM providers available. Using local CSV lookup (recommended for offline).")
+        st.info("💡 Set OPENAI_API_KEY, GROQ_API_KEY, or GOOGLE_API_KEY to enable AI features")
         
     # Workflow mode selector
     st.subheader("Workflow Mode")
-    use_langgraph = st.checkbox("Use LangGraph Multi-Agent Orchestration", value=bool(openai_key))
-    if use_langgraph and not openai_key:
-        st.error("LangGraph requires OPENAI_API_KEY")
+    use_langgraph = st.checkbox("Use LangGraph Multi-Agent Orchestration", value=llm_provider.is_available())
+    if use_langgraph and not llm_provider.is_available():
+        st.error("LangGraph requires at least one LLM provider (OpenAI, Groq, or Gemini)")
 
 # Chat state
 if "messages" not in st.session_state:
@@ -67,7 +72,7 @@ if "step" not in st.session_state:
 if "patient" not in st.session_state:
     st.session_state.patient = {}
 if "use_langgraph" not in st.session_state:
-    st.session_state.use_langgraph = bool(os.getenv("OPENAI_API_KEY"))
+    st.session_state.use_langgraph = get_llm_provider().is_available()
 
 # On first load, show the greeting message without waiting for user input
 if st.session_state.step == "greeting" and not any(m.get("role") == "assistant" for m in st.session_state.messages):
@@ -90,10 +95,10 @@ if prompt := st.chat_input("Type your response..."):
     st.session_state.messages.append({"role": "user", "content": prompt})
 
     # Update LangGraph usage preference
-    use_langgraph = st.session_state.get("use_langgraph", bool(os.getenv("OPENAI_API_KEY")))
+    use_langgraph = st.session_state.get("use_langgraph", get_llm_provider().is_available())
     
     # NEW: LangGraph Multi-Agent Orchestration Path
-    if use_langgraph and os.getenv("OPENAI_API_KEY"):
+    if use_langgraph and get_llm_provider().is_available():
         try:
             # Use LangGraph multi-agent system for complete workflow
             result = orchestrator.process_patient_request(prompt)

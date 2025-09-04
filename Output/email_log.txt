@@ -1,0 +1,1 @@
+test@example.com: Reminder: Hi Patient, you have an upcoming appointment. Please confirm.

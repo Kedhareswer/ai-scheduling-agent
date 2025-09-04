@@ -1,24 +1,23 @@
 from langchain_experimental.agents.agent_toolkits import create_csv_agent
-from langchain_openai import ChatOpenAI
 import os
 import pandas as pd
 from dotenv import load_dotenv
+from .llm_provider import get_llm_provider
 
 class PatientLookup:
     def __init__(self, patients_csv):
         load_dotenv()
         self.patients_csv = patients_csv
         self.agent = None
-        openai_api_key = os.getenv("OPENAI_API_KEY")
-        # Initialize the agent only if an API key is available; otherwise, fallback to local CSV lookup
-        if openai_api_key:
+        
+        # Initialize flexible LLM provider
+        self.llm_provider = get_llm_provider()
+        
+        # Initialize the agent only if an LLM is available; otherwise, fallback to local CSV lookup
+        if self.llm_provider.is_available():
             try:
                 self.agent = create_csv_agent(
-                    ChatOpenAI(
-                        model="gpt-4o-mini",
-                        temperature=0,
-                        openai_api_key=openai_api_key
-                    ),
+                    self.llm_provider.llm,
                     patients_csv,
                     verbose=False,
                     allow_dangerous_code=True

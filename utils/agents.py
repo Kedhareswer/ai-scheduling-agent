@@ -1,6 +1,5 @@
 from typing import Dict, Any, List, TypedDict, Annotated
 from langgraph.graph import StateGraph, END, START
-from langchain_openai import ChatOpenAI
 from langchain_core.messages import HumanMessage, SystemMessage
 from langchain_core.tools import tool
 import pandas as pd
@@ -14,6 +13,7 @@ from .email_sender import EmailSender
 from .sms_sender import SMSSender
 from .admin_exporter import AdminExporter
 from .reminder_system import ReminderSystem
+from .llm_provider import get_llm_provider
 
 class AgentState(TypedDict):
     """State shared across all agents in the LangGraph workflow"""
@@ -29,12 +29,9 @@ class SchedulingAgentOrchestrator:
     """Multi-agent orchestration using LangGraph for medical appointment scheduling"""
     
     def __init__(self):
-        # Initialize LLM
-        self.llm = ChatOpenAI(
-            model="gpt-4o-mini",
-            temperature=0,
-            openai_api_key=os.getenv("OPENAI_API_KEY")
-        ) if os.getenv("OPENAI_API_KEY") else None
+        # Initialize flexible LLM provider
+        self.llm_provider = get_llm_provider()
+        self.llm = self.llm_provider.llm
         
         # Initialize utilities
         self.patient_lookup = PatientLookup("Data/patients.csv")
