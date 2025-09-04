@@ -110,7 +110,7 @@ if prompt := st.chat_input("Type your response..."):
             # Mark as complete
             st.session_state.step = "done"
             # Rerun to immediately display assistant messages
-            st.experimental_rerun()
+            st.rerun()
             
         except Exception as e:
             st.session_state.messages.append(
@@ -119,7 +119,7 @@ if prompt := st.chat_input("Type your response..."):
             # Fall back to manual workflow
             use_langgraph = False
             # Rerun to show the error assistant message
-            st.experimental_rerun()
+            st.rerun()
     
     # EXISTING: Manual Step-by-Step Workflow (Fallback)
     if not use_langgraph:
