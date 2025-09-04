@@ -7,6 +7,8 @@ openpyxl==3.1.2
 langchain==0.3.26
 langchain-openai==0.1.7
 langchain-experimental==0.0.60
+langgraph==0.2.51
+langchain-core==0.3.26
 
 # Environment variable management
 python-dotenv==1.0.1
